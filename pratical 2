@@ -1,0 +1,97 @@
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;chrono&gt;
+
+using namespace std;
+using namespace chrono;
+
+// Linear Search
+int findLinear(const vector&lt;int&gt;&amp; numbers, int target)
+{
+int position = -1;
+
+for (size_t i = 0; i &lt; numbers.size(); i++)
+{
+if (numbers[i] == target)
+{
+position = i;
+break;
+}
+}
+
+return position;
+}
+
+// Binary Search
+int findBinary(const vector&lt;int&gt;&amp; numbers, int target)
+{
+int left = 0;
+int right = numbers.size() - 1;
+
+while (left &lt;= right)
+{
+
+int center = (left + right) / 2;
+
+if (numbers[center] == target)
+{
+return center;
+}
+else if (target &gt; numbers[center])
+{
+left = center + 1;
+}
+else
+{
+right = center - 1;
+}
+}
+
+return -1;
+}
+
+int main()
+{
+const int SIZE = 100000;
+vector&lt;int&gt; numbers(SIZE);
+
+// Store sorted values
+for (int i = 0; i &lt; SIZE; i++)
+{
+numbers[i] = i + 1;
+}
+
+int target;
+cout &lt;&lt; &quot;Enter the value to search: &quot;;
+
+cin &gt;&gt; target;
+
+int result;
+
+// Measure Linear Search
+auto begin = high_resolution_clock::now();
+result = findLinear(numbers, target);
+auto finish = high_resolution_clock::now();
+
+cout &lt;&lt; &quot;\n----- Linear Search -----&quot; &lt;&lt; endl;
+
+if (result &gt;= 0)
+cout &lt;&lt; &quot;Value found at index: &quot; &lt;&lt; result &lt;&lt; endl;
+else
+cout &lt;&lt; &quot;Value not found.&quot; &lt;&lt; endl;
+
+cout &lt;&lt; &quot;Execution Time: &quot;
+&lt;&lt; duration_cast&lt;microseconds&gt;(finish - begin).count()
+&lt;&lt; &quot; microseconds&quot; &lt;&lt; endl;
+
+// Measure Binary Search
+begin = high_resolution_clock::now();
+result = findBinary(numbers, target);
+finish = high_resolution_clock::now();
+
+cout &lt;&lt; &quot;\n----- Binary Search -----&quot; &lt;&lt; endl;
+
+if (result &gt;= 0)
+cout &lt;&lt; &quot;Value found at index: &quot; &lt;&lt; result &lt;&lt; endl;
+else
+cout &lt;&lt; &quot;Value not found.&quot; &lt;&lt; endl;
