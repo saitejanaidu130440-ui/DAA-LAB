@@ -1,0 +1,89 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+struct Edge {
+    int u, v, weight;
+};
+
+bool compare(Edge a, Edge b) {
+    return a.weight < b.weight;
+}
+
+class DSU {
+    vector<int> parent, rank;
+
+public:
+    DSU(int n) {
+        parent.resize(n);
+        rank.resize(n, 0);
+
+        for (int i = 0; i < n; i++)
+            parent[i] = i;
+    }
+
+    int find(int x) {
+        if (parent[x] != x)
+            parent[x] = find(parent[x]);
+        return parent[x];
+    }
+
+    void unite(int u, int v) {
+        int rootU = find(u);
+        int rootV = find(v);
+
+        if (rootU == rootV)
+            return;
+
+        if (rank[rootU] < rank[rootV])
+            parent[rootU] = rootV;
+        else if (rank[rootU] > rank[rootV])
+            parent[rootV] = rootU;
+        else {
+            parent[rootV] = rootU;
+            rank[rootU]++;
+        }
+    }
+};
+
+int main() {
+    int V, E;
+    cin >> V >> E;
+
+    vector<Edge> edges(E);
+
+    for (int i = 0; i < E; i++)
+        cin >> edges[i].u >> edges[i].v >> edges[i].weight;
+
+    sort(edges.begin(), edges.end(), compare);
+
+    DSU dsu(V);
+    int totalWeight = 0;
+    int edgesUsed = 0;
+
+    cout << "Edges in the Minimum Spanning Tree:\n";
+
+    for (auto edge : edges) {
+        if (dsu.find(edge.u) != dsu.find(edge.v)) {
+            dsu.unite(edge.u, edge.v);
+
+            cout << edge.u << " - " << edge.v
+                 << " : " << edge.weight << '\n';
+
+            totalWeight += edge.weight;
+            edgesUsed++;
+
+            if (edgesUsed == V - 1)
+                break;
+        }
+    }
+
+    if (edgesUsed != V - 1) {
+        cout << "MST does not exist: graph is disconnected.\n";
+    } else {
+        cout << "Total weight of MST: " << totalWeight << '\n';
+    }
+
+    return 0;
+}
